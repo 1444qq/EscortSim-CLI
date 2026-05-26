@@ -1,0 +1,10 @@
+{
+  "name": "escort-sim-prototype",
+  "version": "0.1.0",
+  "description": "CLI prototype for EscortSim negotiation system",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  }
+}
