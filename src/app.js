@@ -132,8 +132,13 @@ function updateSidebar() {
 
     return `
       <div class="escort-card">
-        <div class="escort-name">【${e.name}】${e.title}</div>
-        <div class="escort-tags">${e.tags.join(" · ")}</div>
+        <div class="escort-header">
+          <img class="escort-portrait" src="${e.portrait}" alt="${e.name}">
+          <div class="escort-info">
+            <div class="escort-name">【${e.name}】${e.title}</div>
+            <div class="escort-tags">${e.tags.join(" · ")}</div>
+          </div>
+        </div>
         <div class="stat-bar"><span class="stat-label">口</span><div class="bar"><div class="bar-fill" style="width:${e.speech}%"></div></div></div>
         <div class="stat-bar"><span class="stat-label">武</span><div class="bar"><div class="bar-fill" style="width:${e.combat}%"></div></div></div>
         <div class="stat-bar"><span class="stat-label">胆</span><div class="bar"><div class="bar-fill" style="width:${e.courage}%"></div></div></div>
@@ -384,14 +389,18 @@ function showEscortsModal() {
         }).join("、");
 
     return `
-      <div style="margin:12px 0;padding:12px;border:1px solid var(--border)">
-        <div style="color:var(--text-bright);font-size:14px">【${e.name}】${e.title}</div>
-        <div style="color:var(--accent);font-size:12px;margin:4px 0">${e.tags.join(" · ")}</div>
-        <div style="font-size:12px;margin:4px 0">口才${e.speech} 武力${e.combat} 胆量${e.courage} 义气${e.loyalty}</div>
-        <div style="font-size:12px;color:var(--text-dim);margin:4px 0">${e.bio}</div>
-        <div style="font-size:12px;margin:4px 0">行事: ${e.tendency}</div>
-        <div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">规矩: ${rulesText}</div>
+      <div style="margin:12px 0;padding:12px;border:1px solid var(--border);display:flex;gap:14px">
+        <img src="${e.portrait}" style="width:72px;height:90px;border:1px solid var(--border);background:var(--bg-deep);flex-shrink:0">
+        <div style="flex:1">
+          <div style="color:var(--text-bright);font-size:14px">【${e.name}】${e.title}</div>
+          <div style="color:var(--accent);font-size:12px;margin:4px 0">${e.tags.join(" · ")}</div>
+          <div style="font-size:12px;margin:4px 0">口才${e.speech} 武力${e.combat} 胆量${e.courage} 义气${e.loyalty}</div>
+          <div style="font-size:12px;color:var(--text-dim);margin:4px 0">${e.bio}</div>
+          <div style="font-size:12px;margin:4px 0">行事: ${e.tendency}</div>
+          <div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">规矩: ${rulesText}</div>
+        </div>
       </div>`;
+  }).join("");
   }).join("");
 
   html += `<div class="modal-actions">

@@ -322,6 +322,25 @@ body {
   border: 1px solid var(--border);
 }
 
+.escort-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.escort-portrait {
+  width: 52px;
+  height: 65px;
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+  flex-shrink: 0;
+}
+
+.escort-info {
+  flex: 1;
+}
+
 .escort-card .escort-name {
   color: var(--text-bright);
   font-size: 13px;

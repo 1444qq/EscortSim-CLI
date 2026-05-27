@@ -76,6 +76,7 @@ const ESCORTS = [
   {
     name: "铁嘴张",
     title: "话事人",
+    portrait: "../assets/portraits/tiezui-zhang.svg",
     speech: 85, combat: 30, courage: 60, loyalty: 70,
     tags: ["圆滑", "贪财", "怕死"],
     tendency: "遇事优先谈判，能用钱解决绝不动手，谈不拢就退让",
@@ -84,6 +85,7 @@ const ESCORTS = [
   {
     name: "莽夫李",
     title: "武师",
+    portrait: "../assets/portraits/mangfu-li.svg",
     speech: 25, combat: 90, courage: 95, loyalty: 85,
     tags: ["暴躁", "义气", "鲁莽"],
     tendency: "不爱废话，觉得对方不讲理就想动手，但听从镖局命令",
@@ -92,6 +94,7 @@ const ESCORTS = [
   {
     name: "柳如烟",
     title: "军师",
+    portrait: "../assets/portraits/liuruyan.svg",
     speech: 70, combat: 45, courage: 50, loyalty: 60,
     tags: ["冷静", "精明", "多疑"],
     tendency: "善于观察对方弱点，喜欢以退为进，必要时不择手段",

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" fill="none">
+  <!-- 莽夫李 - 武师 - 魁梧壮汉，光头（还俗武僧），虬髯 -->
+  <defs>
+    <filter id="ink-blur">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- 背景晕染 -->
+  <ellipse cx="100" cy="135" rx="75" ry="105" fill="#2a1a1a" opacity="0.3"/>
+
+  <!-- 身体轮廓 - 宽阔，短打扮 -->
+  <path d="M55 165 Q45 190 42 230 L55 255 Q100 262 145 255 L158 230 Q155 190 145 165"
+        stroke="#7ab87a" stroke-width="2.5" fill="none" opacity="0.8" filter="url(#ink-blur)"/>
+
+  <!-- 腰带 -->
+  <path d="M58 210 Q100 215 142 210" stroke="#fbbf24" stroke-width="2" fill="none" opacity="0.7"/>
+
+  <!-- 衣领大开 - 露胸 -->
+  <path d="M78 160 L90 195 L100 165" stroke="#a0d0a0" stroke-width="1.8" fill="none"/>
+  <path d="M122 160 L110 195 L100 165" stroke="#a0d0a0" stroke-width="1.8" fill="none"/>
+
+  <!-- 胸肌线条 -->
+  <path d="M88 172 Q95 178 100 172" stroke="#5a8a5a" stroke-width="1" fill="none" opacity="0.6"/>
+  <path d="M100 172 Q105 178 112 172" stroke="#5a8a5a" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- 头部 - 圆大 -->
+  <ellipse cx="100" cy="105" rx="32" ry="36" stroke="#c0e8c0" stroke-width="2.5" fill="none" opacity="0.9"/>
+
+  <!-- 光头 - 无发，戒疤暗示 -->
+  <circle cx="92" cy="76" r="2" stroke="#5a8a5a" stroke-width="1" fill="none" opacity="0.5"/>
+  <circle cx="100" cy="74" r="2" stroke="#5a8a5a" stroke-width="1" fill="none" opacity="0.5"/>
+  <circle cx="108" cy="76" r="2" stroke="#5a8a5a" stroke-width="1" fill="none" opacity="0.5"/>
+
+  <!-- 粗眉 - 怒目 -->
+  <path d="M80 96 Q88 91 97 95" stroke="#c0e8c0" stroke-width="2.5" fill="none"/>
+  <path d="M103 95 Q112 91 120 96" stroke="#c0e8c0" stroke-width="2.5" fill="none"/>
+
+  <!-- 眼 - 圆大有神 -->
+  <circle cx="89" cy="102" r="3" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+  <circle cx="89" cy="102" r="1.5" fill="#c0e8c0"/>
+  <circle cx="111" cy="102" r="3" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+  <circle cx="111" cy="102" r="1.5" fill="#c0e8c0"/>
+
+  <!-- 鼻子 - 宽大 -->
+  <path d="M100 106 L97 117 Q100 120 103 117" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+  <path d="M95 118 Q100 121 105 118" stroke="#a0d0a0" stroke-width="1.2" fill="none"/>
+
+  <!-- 嘴 - 紧抿 -->
+  <path d="M90 128 L110 128" stroke="#c0e8c0" stroke-width="2" fill="none"/>
+
+  <!-- 络腮胡 -->
+  <path d="M75 115 Q72 125 75 135 Q80 140 88 135" stroke="#7ab87a" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M125 115 Q128 125 125 135 Q120 140 112 135" stroke="#7ab87a" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M88 135 Q100 142 112 135" stroke="#7ab87a" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+  <!-- 肩宽线条强调 -->
+  <path d="M55 165 Q45 160 38 155" stroke="#7ab87a" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M145 165 Q155 160 162 155" stroke="#7ab87a" stroke-width="2" fill="none" opacity="0.5"/>
+</svg>

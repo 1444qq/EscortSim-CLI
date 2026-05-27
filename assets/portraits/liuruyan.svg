@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" fill="none">
+  <!-- 柳如烟 - 军师 - 清瘦文人，前师爷，冷峻精明 -->
+  <defs>
+    <filter id="ink-blur">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- 背景晕染 -->
+  <ellipse cx="100" cy="130" rx="65" ry="95" fill="#1a1a2a" opacity="0.3"/>
+
+  <!-- 身体 - 瘦削，文人袍 -->
+  <path d="M75 158 Q70 185 68 225 L75 255 Q100 258 125 255 L132 225 Q130 185 125 158"
+        stroke="#7ab87a" stroke-width="1.8" fill="none" opacity="0.8" filter="url(#ink-blur)"/>
+
+  <!-- 衣领 - 整齐 -->
+  <path d="M90 153 L96 178 L100 155" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+  <path d="M110 153 L104 178 L100 155" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+
+  <!-- 腰带 -->
+  <path d="M72 210 Q100 213 128 210" stroke="#7ab87a" stroke-width="1.5" fill="none" opacity="0.6"/>
+
+  <!-- 头部 - 偏瘦长 -->
+  <ellipse cx="100" cy="108" rx="25" ry="34" stroke="#c0e8c0" stroke-width="1.8" fill="none" opacity="0.9"/>
+
+  <!-- 头发 - 文人髻，有方巾 -->
+  <path d="M80 88 Q82 70 100 66 Q118 70 120 88" stroke="#c0e8c0" stroke-width="2" fill="none"/>
+  <path d="M85 75 Q100 68 115 75" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+  <!-- 方巾带 -->
+  <path d="M120 78 Q125 82 130 78 Q128 88 122 85" stroke="#a0d0a0" stroke-width="1" fill="none" opacity="0.7"/>
+
+  <!-- 眉 - 细长平直 -->
+  <path d="M83 100 L96 99" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+  <path d="M104 99 L117 100" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+
+  <!-- 眼 - 狭长锐利 -->
+  <path d="M84 105 Q90 103 96 106" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+  <circle cx="90" cy="105" r="1.2" fill="#c0e8c0"/>
+  <path d="M104 106 Q110 103 116 105" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+  <circle cx="110" cy="105" r="1.2" fill="#c0e8c0"/>
+
+  <!-- 鼻子 - 挺直 -->
+  <line x1="100" y1="106" x2="100" y2="118" stroke="#a0d0a0" stroke-width="1.2"/>
+  <path d="M97 118 Q100 120 103 118" stroke="#a0d0a0" stroke-width="1" fill="none"/>
+
+  <!-- 嘴 - 薄唇微抿 -->
+  <path d="M94 126 Q100 128 106 126" stroke="#c0e8c0" stroke-width="1.2" fill="none"/>
+
+  <!-- 手持书卷 -->
+  <rect x="55" y="200" width="8" height="35" rx="3" stroke="#fbbf24" stroke-width="1.2" fill="none" opacity="0.7"/>
+  <line x1="57" y1="205" x2="57" y2="230" stroke="#fbbf24" stroke-width="0.6" opacity="0.4"/>
+  <line x1="61" y1="205" x2="61" y2="230" stroke="#fbbf24" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- 袖口飘逸 -->
+  <path d="M68 225 Q60 230 52 225 Q48 220 52 215" stroke="#7ab87a" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M132 225 Q140 230 148 225 Q152 220 148 215" stroke="#7ab87a" stroke-width="1.2" fill="none" opacity="0.6"/>
+</svg>

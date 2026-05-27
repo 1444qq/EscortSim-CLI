@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" fill="none">
+  <!-- 铁嘴张 - 话事人 - 圆滑精明的中年人，蓄须，带折扇 -->
+  <defs>
+    <filter id="ink-blur">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- 背景晕染 -->
+  <ellipse cx="100" cy="130" rx="70" ry="100" fill="#1a2a1a" opacity="0.3"/>
+
+  <!-- 身体轮廓 - 长衫 -->
+  <path d="M70 160 Q60 180 55 220 L65 255 Q100 260 135 255 L145 220 Q140 180 130 160"
+        stroke="#7ab87a" stroke-width="2" fill="none" opacity="0.8" filter="url(#ink-blur)"/>
+  <path d="M75 165 Q100 170 125 165" stroke="#7ab87a" stroke-width="1.5" fill="none" opacity="0.6"/>
+
+  <!-- 衣领 -->
+  <path d="M88 155 L95 175 L100 155" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+  <path d="M112 155 L105 175 L100 155" stroke="#a0d0a0" stroke-width="1.5" fill="none"/>
+
+  <!-- 头部轮廓 -->
+  <ellipse cx="100" cy="110" rx="28" ry="35" stroke="#c0e8c0" stroke-width="2" fill="none" opacity="0.9"/>
+
+  <!-- 发髻 -->
+  <path d="M80 85 Q85 65 100 62 Q115 65 120 85" stroke="#c0e8c0" stroke-width="2.5" fill="none"/>
+  <path d="M95 62 Q100 55 105 62" stroke="#c0e8c0" stroke-width="2" fill="none"/>
+
+  <!-- 眉眼 - 细长精明 -->
+  <path d="M84 103 Q90 100 96 103" stroke="#c0e8c0" stroke-width="1.8" fill="none"/>
+  <path d="M104 103 Q110 100 116 103" stroke="#c0e8c0" stroke-width="1.8" fill="none"/>
+  <circle cx="90" cy="105" r="1.5" fill="#c0e8c0"/>
+  <circle cx="110" cy="105" r="1.5" fill="#c0e8c0"/>
+
+  <!-- 鼻子 -->
+  <path d="M100 108 L98 118 Q100 120 102 118" stroke="#a0d0a0" stroke-width="1.2" fill="none"/>
+
+  <!-- 嘴 - 微笑 -->
+  <path d="M92 127 Q100 132 108 127" stroke="#c0e8c0" stroke-width="1.5" fill="none"/>
+
+  <!-- 胡须 - 两撇八字胡 -->
+  <path d="M94 125 Q88 130 82 128" stroke="#a0d0a0" stroke-width="1.2" fill="none" opacity="0.8"/>
+  <path d="M106 125 Q112 130 118 128" stroke="#a0d0a0" stroke-width="1.2" fill="none" opacity="0.8"/>
+
+  <!-- 折扇 -->
+  <path d="M135 200 L155 170 Q160 168 165 172 L148 205 Z" stroke="#fbbf24" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <line x1="140" y1="192" x2="158" y2="175" stroke="#fbbf24" stroke-width="0.8" opacity="0.5"/>
+  <line x1="142" y1="198" x2="161" y2="179" stroke="#fbbf24" stroke-width="0.8" opacity="0.5"/>
+</svg>
