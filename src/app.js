@@ -20,6 +20,7 @@ function showScreen(id) {
   const ollamaFields = $("#ollama-fields");
   const keyInput = $("#api-key-input");
   const modelSelect = $("#model-select");
+  const modelCustomInput = $("#model-custom-input");
   const ollamaUrlInput = $("#ollama-url-input");
   const ollamaModelInput = $("#ollama-model-input");
   const btnEnter = $("#btn-enter");
@@ -33,6 +34,24 @@ function showScreen(id) {
     ollamaFields.style.display = isOllama ? "block" : "none";
     errorEl.textContent = "";
   });
+
+  // 模型下拉 - 自定义输入联动
+  modelSelect.addEventListener("change", () => {
+    if (modelSelect.value === "__custom__") {
+      modelCustomInput.style.display = "block";
+      modelCustomInput.focus();
+    } else {
+      modelCustomInput.style.display = "none";
+    }
+  });
+
+  // 获取当前选择的模型ID
+  function getSelectedModel() {
+    if (modelSelect.value === "__custom__") {
+      return modelCustomInput.value.trim();
+    }
+    return modelSelect.value;
+  }
 
   // 恢复保存的配置
   const savedBackend = localStorage.getItem("llm_backend") || "openrouter";
@@ -48,7 +67,17 @@ function showScreen(id) {
     keyInput.value = savedKey;
     hintEl.textContent = `已保存: ${savedKey.slice(0, 12)}... (点击按钮重新验证)`;
   }
-  if (savedModel) modelSelect.value = savedModel;
+  // 恢复模型选择：如果保存的值不在预设列表里，走自定义
+  if (savedModel) {
+    const optionExists = Array.from(modelSelect.options).some(o => o.value === savedModel);
+    if (optionExists) {
+      modelSelect.value = savedModel;
+    } else {
+      modelSelect.value = "__custom__";
+      modelCustomInput.value = savedModel;
+      modelCustomInput.style.display = "block";
+    }
+  }
   ollamaUrlInput.value = savedOllamaUrl;
   ollamaModelInput.value = savedOllamaModel;
 
@@ -64,13 +93,16 @@ function showScreen(id) {
     try {
       if (backend === "openrouter") {
         const key = keyInput.value.trim();
-        const model = modelSelect.value;
+        const model = getSelectedModel();
 
         if (!key) {
           throw new Error("请输入 API Key");
         }
         if (!key.startsWith("sk-or-")) {
           throw new Error("格式错误：OpenRouter Key 应以 sk-or- 开头");
+        }
+        if (!model) {
+          throw new Error("请选择或输入模型 ID");
         }
 
         llm.configure({ backend: "openrouter", apiKey: key, model });
