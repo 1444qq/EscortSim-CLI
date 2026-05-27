@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <rect width="256" height="256" fill="#0a0a0f"/>
+  <text x="128" y="145" text-anchor="middle" font-family="serif" font-size="120" fill="#4ade80">镖</text>
+  <rect x="20" y="20" width="216" height="216" stroke="#4ade80" stroke-width="4" fill="none" rx="8"/>
+</svg>
