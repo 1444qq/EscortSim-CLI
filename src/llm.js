@@ -131,59 +131,84 @@ class LLMClient {
   async _chatOpenRouter(messages, temperature) {
     if (!this.apiKey) throw new Error("API Key 未设置");
 
-    const resp = await fetch(this.openrouterUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.apiKey}`,
-        "HTTP-Referer": "https://github.com/escort-sim",
-        "X-Title": "EscortSim"
-      },
-      body: JSON.stringify({
-        model: this.model,
-        messages,
-        temperature,
-        max_tokens: 2000,
-      })
-    });
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const resp = await fetch(this.openrouterUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.apiKey}`,
+          "HTTP-Referer": "https://github.com/escort-sim",
+          "X-Title": "EscortSim"
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages,
+          temperature,
+          max_tokens: 2000,
+        })
+      });
 
-    if (!resp.ok) {
-      const err = await resp.text();
-      throw new Error(`API 错误 ${resp.status}: ${err}`);
+      if (resp.status === 429) {
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, attempt * 3000));
+          continue;
+        }
+        throw new Error("免费模型限流中，请稍后再试或切换其他模型");
+      }
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        throw new Error(`API 错误 ${resp.status}: ${err}`);
+      }
+
+      const data = await resp.json();
+      let content = data.choices?.[0]?.message?.content || "";
+      content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+      return content;
     }
-
-    const data = await resp.json();
-    let content = data.choices?.[0]?.message?.content || "";
-    content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-    return content;
   }
 
   async _chatStreamOpenRouter(messages, temperature, onChunk) {
     if (!this.apiKey) throw new Error("API Key 未设置");
 
-    const resp = await fetch(this.openrouterUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.apiKey}`,
-        "HTTP-Referer": "https://github.com/escort-sim",
-        "X-Title": "EscortSim"
-      },
-      body: JSON.stringify({
-        model: this.model,
-        messages,
-        temperature,
-        max_tokens: 2000,
-        stream: true,
-      })
-    });
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const resp = await fetch(this.openrouterUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.apiKey}`,
+          "HTTP-Referer": "https://github.com/escort-sim",
+          "X-Title": "EscortSim"
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages,
+          temperature,
+          max_tokens: 2000,
+          stream: true,
+        })
+      });
 
-    if (!resp.ok) {
-      const err = await resp.text();
-      throw new Error(`API 错误 ${resp.status}: ${err}`);
+      if (resp.status === 429) {
+        if (attempt < maxRetries) {
+          // 等待后重试（指数退避）
+          const wait = attempt * 3000;
+          if (onChunk) onChunk(`[限流，${wait / 1000}秒后重试 ${attempt}/${maxRetries}...]\n`, "");
+          await new Promise(r => setTimeout(r, wait));
+          continue;
+        }
+        throw new Error("免费模型限流中，请稍后再试或切换其他模型");
+      }
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        throw new Error(`API 错误 ${resp.status}: ${err}`);
+      }
+
+      return await this._readSSEStream(resp, onChunk);
     }
-
-    return await this._readSSEStream(resp, onChunk);
   }
 
   // ─── Ollama ───
