@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>镖局风云</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== Screen 1: Login ==================== -->
+  <div id="screen-login" class="screen active">
+    <div class="login-container">
+      <pre class="ascii-title">
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                          ┃
+┃     镖  局  风  云                        ┃
+┃     ESCORT BUREAU CHRONICLES             ┃
+┃                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</pre>
+
+      <div class="login-card">
+        <div class="login-field">
+          <label for="api-key-input">OpenRouter API Key</label>
+          <input type="password" id="api-key-input" placeholder="sk-or-v1-..." autocomplete="off">
+          <span class="key-hint" id="saved-key-hint"></span>
+        </div>
+
+        <div class="login-field">
+          <label for="model-select">模型</label>
+          <select id="model-select">
+            <option value="deepseek/deepseek-chat-v3-0324">DeepSeek V3 (推荐/便宜)</option>
+            <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B</option>
+            <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="anthropic/claude-sonnet-4">Claude Sonnet 4 (贵)</option>
+          </select>
+        </div>
+
+        <div id="login-error" class="login-error"></div>
+
+        <button id="btn-enter" class="btn-primary">
+          <span class="btn-text">进 入 江 湖</span>
+          <span class="btn-loading" style="display:none">验证中...</span>
+        </button>
+      </div>
+
+      <div class="login-footer">
+        <a href="https://openrouter.ai/keys" class="link" id="link-get-key">获取 API Key</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Screen 2: Game ==================== -->
+  <div id="screen-game" class="screen">
+
+    <!-- Top status bar -->
+    <header class="status-bar">
+      <span class="status-item" id="status-day">第 1/30 天</span>
+      <span class="status-item" id="status-money">💰 180 两</span>
+      <span class="status-item" id="status-debt">📋 欠债 100 两</span>
+      <span class="status-item" id="status-rep">📈 声望 62</span>
+      <span class="status-item status-warning" id="status-warning"></span>
+    </header>
+
+    <!-- Main content area -->
+    <div class="game-body">
+
+      <!-- Left: narrative output -->
+      <main class="narrative-panel" id="narrative-panel">
+        <div class="narrative-content" id="narrative-content">
+          <div class="narrative-welcome">
+            <p>大宋宣和二年，秋末。河北东路，清河县。</p>
+            <p>方腊在南方起事，朝廷抽调兵力南征，各地防务空虚。</p>
+            <p>入冬前最后一波旺季。你有 30 天。</p>
+            <p class="dim">点击下方按钮开始经营……</p>
+          </div>
+        </div>
+        <div class="narrative-loading" id="narrative-loading" style="display:none">
+          <span class="loading-dots">思索中</span>
+        </div>
+      </main>
+
+      <!-- Right: sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section" id="escorts-panel">
+          <!-- filled by JS -->
+        </div>
+        <div class="sidebar-section" id="rules-panel">
+          <h3>📜 镖局总规矩 <span id="rules-count">(0/3)</span></h3>
+          <ul id="rules-list" class="rules-list">
+            <li class="dim">暂无规矩</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom action bar -->
+    <footer class="action-bar" id="action-bar">
+      <button class="btn-action" data-action="daily">过一天</button>
+      <button class="btn-action" data-action="rules">改规矩</button>
+      <button class="btn-action" data-action="escorts">查看镖师</button>
+      <button class="btn-action" data-action="mission">出镖</button>
+    </footer>
+
+    <!-- Modal overlay for rules editing, mission selection, etc. -->
+    <div class="modal-overlay" id="modal-overlay" style="display:none">
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="game-data.js"></script>
+  <script src="llm.js"></script>
+  <script src="game-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
