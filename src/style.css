@@ -203,6 +203,21 @@ body {
   font-weight: bold;
 }
 
+.status-model {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+
+.status-model:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* Game body */
 .game-body {
   display: flex;

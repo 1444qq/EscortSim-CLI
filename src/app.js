@@ -169,6 +169,106 @@ function initGame() {
   updateStatusBar();
   updateSidebar();
   bindActionButtons();
+  initModelSwitch();
+}
+
+function initModelSwitch() {
+  const modelEl = $("#status-model");
+  modelEl.textContent = `🤖 ${llm.model}`;
+  modelEl.addEventListener("click", showModelSwitchModal);
+}
+
+function showModelSwitchModal() {
+  if (isProcessing) return;
+
+  const isOllama = llm.backend === "ollama";
+  const currentModel = llm.model;
+
+  let html = `<h2>切换模型</h2>`;
+  html += `<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">当前: ${llm.backend === "ollama" ? "Ollama" : "OpenRouter"} / ${currentModel}</p>`;
+
+  if (!isOllama) {
+    const models = [
+      { id: "deepseek/deepseek-chat-v3-0324:free", label: "DeepSeek V3 (免费)" },
+      { id: "deepseek/deepseek-v4-flash:free", label: "DeepSeek V4 Flash (免费)" },
+      { id: "openai/gpt-oss-120b:free", label: "GPT-OSS 120B (免费)" },
+      { id: "google/gemini-2.5-flash:free", label: "Gemini 2.5 Flash (免费)" },
+      { id: "qwen/qwen3-30b-a3b:free", label: "Qwen3 30B (免费)" },
+      { id: "deepseek/deepseek-chat-v3-0324", label: "DeepSeek V3 (付费)" },
+      { id: "qwen/qwen-2.5-72b-instruct", label: "Qwen 2.5 72B (付费)" },
+      { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash (付费)" },
+      { id: "anthropic/claude-sonnet-4", label: "Claude Sonnet 4 (付费)" },
+    ];
+
+    html += models.map(m => {
+      const selected = m.id === currentModel ? " selected" : "";
+      return `<div class="rule-option${selected}" data-model="${m.id}">
+        <span class="rule-check">${m.id === currentModel ? '✓' : '○'}</span>
+        <span class="rule-text">${m.label}</span>
+      </div>`;
+    }).join("");
+
+    html += `<div style="margin-top:12px">
+      <label style="font-size:11px;color:var(--text-dim)">自定义模型 ID:</label>
+      <input type="text" id="modal-custom-model" placeholder="如 meta-llama/llama-4-scout:free" style="width:100%;margin-top:4px;background:var(--bg-deep);border:1px solid var(--border);color:var(--text-bright);font-family:var(--font-mono);font-size:12px;padding:8px;">
+    </div>`;
+  } else {
+    html += `<div>
+      <label style="font-size:11px;color:var(--text-dim)">Ollama 模型名称:</label>
+      <input type="text" id="modal-ollama-model" value="${currentModel}" style="width:100%;margin-top:4px;background:var(--bg-deep);border:1px solid var(--border);color:var(--text-bright);font-family:var(--font-mono);font-size:12px;padding:8px;">
+    </div>`;
+  }
+
+  html += `<div class="modal-actions">
+    <button class="btn-modal" onclick="closeModal()">取消</button>
+    <button class="btn-modal primary" id="btn-apply-model">应用</button>
+  </div>`;
+
+  showModal(html);
+
+  // 绑定预设点击
+  if (!isOllama) {
+    $$(".rule-option[data-model]").forEach(el => {
+      el.addEventListener("click", () => {
+        $$(".rule-option[data-model]").forEach(e => {
+          e.classList.remove("selected");
+          e.querySelector(".rule-check").textContent = "○";
+        });
+        el.classList.add("selected");
+        el.querySelector(".rule-check").textContent = "✓";
+        // 清空自定义输入
+        const customInput = $("#modal-custom-model");
+        if (customInput) customInput.value = "";
+      });
+    });
+  }
+
+  // 应用按钮
+  $("#btn-apply-model").addEventListener("click", () => {
+    let newModel = "";
+
+    if (!isOllama) {
+      const customInput = $("#modal-custom-model");
+      if (customInput && customInput.value.trim()) {
+        newModel = customInput.value.trim();
+      } else {
+        const selected = $(".rule-option.selected[data-model]");
+        if (selected) newModel = selected.dataset.model;
+      }
+    } else {
+      const input = $("#modal-ollama-model");
+      if (input) newModel = input.value.trim();
+    }
+
+    if (newModel && newModel !== currentModel) {
+      llm.model = newModel;
+      localStorage.setItem(isOllama ? "ollama_model" : "llm_model", newModel);
+      $("#status-model").textContent = `🤖 ${newModel}`;
+      appendNarrative(`<div class="event-rules">⚙️ 模型已切换为: ${newModel}</div>`);
+    }
+
+    closeModal();
+  });
 }
 
 function updateStatusBar() {
