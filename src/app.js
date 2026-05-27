@@ -15,37 +15,45 @@ function showScreen(id) {
 // ─── Login Screen ───
 
 (function initLogin() {
+  const backendSelect = $("#backend-select");
+  const openrouterFields = $("#openrouter-fields");
+  const ollamaFields = $("#ollama-fields");
   const keyInput = $("#api-key-input");
   const modelSelect = $("#model-select");
+  const ollamaUrlInput = $("#ollama-url-input");
+  const ollamaModelInput = $("#ollama-model-input");
   const btnEnter = $("#btn-enter");
   const errorEl = $("#login-error");
   const hintEl = $("#saved-key-hint");
 
+  // 后端切换 UI
+  backendSelect.addEventListener("change", () => {
+    const isOllama = backendSelect.value === "ollama";
+    openrouterFields.style.display = isOllama ? "none" : "block";
+    ollamaFields.style.display = isOllama ? "block" : "none";
+    errorEl.textContent = "";
+  });
+
   // 恢复保存的配置
+  const savedBackend = localStorage.getItem("llm_backend") || "openrouter";
   const savedKey = localStorage.getItem("openrouter_key") || "";
   const savedModel = localStorage.getItem("llm_model") || "";
+  const savedOllamaUrl = localStorage.getItem("ollama_url") || "http://localhost:11434";
+  const savedOllamaModel = localStorage.getItem("ollama_model") || "qwen3:30b";
+
+  backendSelect.value = savedBackend;
+  backendSelect.dispatchEvent(new Event("change"));
 
   if (savedKey) {
     keyInput.value = savedKey;
     hintEl.textContent = `已保存: ${savedKey.slice(0, 12)}... (点击按钮重新验证)`;
   }
-  if (savedModel) {
-    modelSelect.value = savedModel;
-  }
+  if (savedModel) modelSelect.value = savedModel;
+  ollamaUrlInput.value = savedOllamaUrl;
+  ollamaModelInput.value = savedOllamaModel;
 
   btnEnter.addEventListener("click", async () => {
-    const key = keyInput.value.trim();
-    const model = modelSelect.value;
-
-    if (!key) {
-      errorEl.textContent = "请输入 API Key";
-      return;
-    }
-
-    if (!key.startsWith("sk-or-")) {
-      errorEl.textContent = "格式错误：OpenRouter Key 应以 sk-or- 开头";
-      return;
-    }
+    const backend = backendSelect.value;
 
     // 显示加载状态
     btnEnter.querySelector(".btn-text").style.display = "none";
@@ -54,43 +62,58 @@ function showScreen(id) {
     errorEl.textContent = "";
 
     try {
-      // 配置 LLM
-      llm.configure(key, model);
+      if (backend === "openrouter") {
+        const key = keyInput.value.trim();
+        const model = modelSelect.value;
 
-      // 严格验证 key + 余额
-      const result = await llm.validateKey();
-      console.log("[Login] validateKey result:", result);
+        if (!key) {
+          throw new Error("请输入 API Key");
+        }
+        if (!key.startsWith("sk-or-")) {
+          throw new Error("格式错误：OpenRouter Key 应以 sk-or- 开头");
+        }
 
-      if (!result.valid) {
-        errorEl.textContent = result.error || "验证失败";
-        btnEnter.querySelector(".btn-text").style.display = "inline";
-        btnEnter.querySelector(".btn-loading").style.display = "none";
-        btnEnter.disabled = false;
-        return;
-      }
+        llm.configure({ backend: "openrouter", apiKey: key, model });
 
-      // 显示余额信息
-      if (result.credits !== null && result.credits !== undefined && isFinite(result.credits)) {
-        hintEl.textContent = `✓ 验证通过 | 余额: $${Number(result.credits).toFixed(3)}`;
+        const result = await llm.validate();
+        if (!result.valid) throw new Error(result.error);
+
+        hintEl.textContent = `✓ ${result.info}`;
+        hintEl.style.color = "var(--accent)";
+
+        // 保存（注意：只存本地，不会进打包产物）
+        localStorage.setItem("openrouter_key", key);
+        localStorage.setItem("llm_model", model);
+
       } else {
-        hintEl.textContent = `✓ 验证通过 | 已用: $${Number(result.usage || 0).toFixed(3)}`;
-      }
-      hintEl.style.color = "var(--accent)";
+        // Ollama
+        const ollamaUrl = ollamaUrlInput.value.trim() || "http://localhost:11434";
+        const ollamaModel = ollamaModelInput.value.trim() || "qwen3:30b";
 
-      // 保存配置
-      localStorage.setItem("openrouter_key", key);
-      localStorage.setItem("llm_model", model);
+        llm.configure({ backend: "ollama", model: ollamaModel, ollamaUrl });
+
+        const result = await llm.validate();
+        if (!result.valid) throw new Error(result.error);
+
+        hintEl.textContent = `✓ ${result.info}`;
+        hintEl.style.color = "var(--accent)";
+
+        // 保存 Ollama 配置
+        localStorage.setItem("ollama_url", ollamaUrl);
+        localStorage.setItem("ollama_model", ollamaModel);
+      }
+
+      localStorage.setItem("llm_backend", backend);
 
       // 短暂显示验证结果后进入游戏
       await new Promise(r => setTimeout(r, 800));
 
-      // 进入游戏
       showScreen("game");
       initGame();
 
     } catch (e) {
       console.error("[Login] Error:", e);
-      errorEl.textContent = `出错: ${e.message}`;
+      errorEl.textContent = e.message || "验证失败";
       btnEnter.querySelector(".btn-text").style.display = "inline";
       btnEnter.querySelector(".btn-loading").style.display = "none";
       btnEnter.disabled = false;
@@ -99,6 +122,9 @@ function showScreen(id) {
 
   // 回车触发
   keyInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") btnEnter.click();
+  });
+  ollamaModelInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") btnEnter.click();
   });
 })();
