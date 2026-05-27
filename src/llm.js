@@ -91,19 +91,14 @@ class LLMClient {
       const models = (data.models || []).map(m => m.name);
 
       // 检查目标模型是否已拉取
-      const modelBase = this.model.split(":")[0];
-      const found = models.some(m => m.startsWith(modelBase));
+      const found = models.some(m => m === this.model || m.startsWith(this.model + ":"));
 
-      if (!found && models.length > 0) {
+      if (!found) {
+        const suggestion = models.length > 0 ? `\n可用模型: ${models.slice(0, 5).join(", ")}` : "";
         return {
-          valid: true,
-          info: `⚠️ 未找到模型 "${this.model}"，可用: ${models.slice(0, 3).join(", ")}`,
-          warning: true
+          valid: false,
+          error: `模型 "${this.model}" 未安装。请先运行: ollama pull ${this.model}${suggestion}`
         };
-      }
-
-      if (models.length === 0) {
-        return { valid: false, error: "Ollama 服务运行中但没有已安装的模型，请先 ollama pull" };
       }
 
       return { valid: true, info: `Ollama 就绪 · 模型: ${this.model}` };
@@ -205,7 +200,12 @@ class LLMClient {
       })
     });
 
-    if (!resp.ok) throw new Error(`Ollama 错误 (HTTP ${resp.status})`);
+    if (!resp.ok) {
+      if (resp.status === 404) {
+        throw new Error(`模型 "${this.model}" 不存在，请检查模型名称或运行 ollama pull ${this.model}`);
+      }
+      throw new Error(`Ollama 错误 (HTTP ${resp.status})`);
+    }
 
     const data = await resp.json();
     let content = data.message?.content || "";
@@ -225,7 +225,12 @@ class LLMClient {
       })
     });
 
-    if (!resp.ok) throw new Error(`Ollama 错误 (HTTP ${resp.status})`);
+    if (!resp.ok) {
+      if (resp.status === 404) {
+        throw new Error(`模型 "${this.model}" 不存在，请检查模型名称或运行 ollama pull ${this.model}`);
+      }
+      throw new Error(`Ollama 错误 (HTTP ${resp.status})`);
+    }
 
     // Ollama uses newline-delimited JSON (not SSE)
     const reader = resp.body.getReader();

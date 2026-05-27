@@ -39,7 +39,7 @@ function showScreen(id) {
   const savedKey = localStorage.getItem("openrouter_key") || "";
   const savedModel = localStorage.getItem("llm_model") || "";
   const savedOllamaUrl = localStorage.getItem("ollama_url") || "http://localhost:11434";
-  const savedOllamaModel = localStorage.getItem("ollama_model") || "qwen3:30b";
+  const savedOllamaModel = localStorage.getItem("ollama_model") || "qwen3-coder:30b";
 
   backendSelect.value = savedBackend;
   backendSelect.dispatchEvent(new Event("change"));
