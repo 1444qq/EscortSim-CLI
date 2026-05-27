@@ -1,49 +1,47 @@
-# 镖局风云 CLI
+# 镖局风云
 
-> 文字交互版原型 — AI 驱动的镖局经营 + 交涉策略游戏
+一款模拟经营游戏。设定非严肃中国古代，你需要运营一个镖局，通过镖师管理、各方势力的协调，达成运镖任务。
+
+主要玩法是给镖师设定各种处事的原则，以及镖局运行的规矩（Prompt），然后在无法微操的情况下派出镖师，和途中江湖各色人等交涉（LLM 对话）。最终会得出一个评价（Token 消耗、LLM 轮数）。系统会不断进化、成长、改变（System Rule）。
+
+---
 
 ## 快速开始
 
 ```bash
-# 1. 配置 API Key (BYOK)
-cp .env.example .env
-# 编辑 .env，填入你的 OpenRouter key
+# 桌面应用（推荐）
+npm install
+npm run dev
 
-# 2. 运行
+# 或者命令行版
 node main.js
 ```
 
-也可以不配 key，直接跑本地 Ollama（需要先启动 Ollama 服务）。
+也可直接安装：`dist/镖局风云 Setup 0.2.0.exe`
 
-## LLM 后端
+## 连接方式
 
-| 后端 | 默认模型 | 说明 |
-|------|---------|------|
-| OpenRouter | `deepseek/deepseek-chat-v3-0324` | 有 key 自动启用，便宜且中文强 |
-| Ollama 本地 | `qwen3-coder:30b` | 无 key 时自动回退，免费但需本地显卡 |
+| 方式 | 说明 |
+|------|------|
+| OpenRouter (BYOK) | 云端模型，需 API Key，支持免费/付费模型 |
+| Ollama 本地 | 免费，需本机运行 Ollama 服务 |
 
-环境变量覆盖：
+游戏内可随时切换模型。
 
-```bash
-LLM_MODEL=anthropic/claude-sonnet-4 node main.js   # 换模型
-LLM_BACKEND=ollama node main.js                      # 强制本地
-```
-
-## 玩法
-
-- 你经营一家镖局，30 天内还清 100 两欠债
-- 通过**设定规矩**间接控制三个性格迥异的镖师
-- 日常事件观察镖师行为 → 调整规矩 → 出镖验证
-- 规矩槽位有限（总 3 + 每人 2），需要取舍
-- 和性格冲突大的规矩，镖师可能不听
-
-## 文件说明
+## 项目结构
 
 ```
-main.js           — 游戏主程序（~900行）
-package.json      — Node.js 配置
-.env.example      — API Key 配置模板
-design-history.md — 设计决策演化记录
+electron/          — Electron 主进程
+src/               — 游戏 UI + 逻辑
+  ├── index.html   — 界面结构
+  ├── style.css    — 像素终端风样式
+  ├── app.js       — 渲染层
+  ├── llm.js       — LLM 客户端（双后端）
+  ├── game-data.js — 游戏数据
+  └── game-engine.js — 状态机 + 规矩系统
+assets/            — 立绘、字体
+main.js            — CLI 版（保留）
+design-history.md  — 设计决策演化记录
 ```
 
 ## 相关项目
