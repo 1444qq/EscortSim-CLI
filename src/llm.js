@@ -14,14 +14,53 @@ class LLMClient {
     if (model) this.model = model;
   }
 
+  /**
+   * 验证 API Key 有效性并检查余额
+   * @returns {{ valid: boolean, error?: string, credits?: number, limit?: number, usage?: number }}
+   */
   async validateKey() {
     try {
-      const resp = await fetch("https://openrouter.ai/api/v1/models", {
+      // OpenRouter /auth/key 端点返回 key 信息（余额、用量等）
+      const resp = await fetch("https://openrouter.ai/api/v1/auth/key", {
         headers: { "Authorization": `Bearer ${this.apiKey}` }
       });
-      return resp.ok;
-    } catch {
-      return false;
+
+      if (!resp.ok) {
+        if (resp.status === 401 || resp.status === 403) {
+          return { valid: false, error: "API Key 无效，请检查后重试" };
+        }
+        return { valid: false, error: `验证请求失败 (${resp.status})` };
+      }
+
+      const data = await resp.json();
+      const info = data.data || data;
+
+      // 检查额度信息
+      // OpenRouter 返回格式: { data: { label, usage, limit, is_free_tier, rate_limit } }
+      const usage = info.usage ?? 0;       // 已用金额 (美元)
+      const limit = info.limit ?? null;    // 额度上限 (null = 无限)
+      const remaining = limit !== null ? (limit - usage) : Infinity;
+
+      // 如果有额度限制且余量不足 $0.01（约几千 tokens），拒绝
+      if (limit !== null && remaining < 0.01) {
+        return {
+          valid: false,
+          error: `额度不足：已用 $${usage.toFixed(3)} / 限额 $${limit.toFixed(2)}，请充值`,
+          credits: remaining,
+          limit,
+          usage
+        };
+      }
+
+      return {
+        valid: true,
+        credits: remaining === Infinity ? null : remaining,
+        limit: limit,
+        usage: usage,
+        label: info.label || ""
+      };
+    } catch (e) {
+      return { valid: false, error: `网络错误: ${e.message}` };
     }
   }
 

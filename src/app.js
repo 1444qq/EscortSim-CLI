@@ -27,7 +27,7 @@ function showScreen(id) {
 
   if (savedKey) {
     keyInput.value = savedKey;
-    hintEl.textContent = `已保存: ${savedKey.slice(0, 12)}...`;
+    hintEl.textContent = `已保存: ${savedKey.slice(0, 12)}... (点击按钮重新验证)`;
   }
   if (savedModel) {
     modelSelect.value = savedModel;
@@ -42,6 +42,11 @@ function showScreen(id) {
       return;
     }
 
+    if (!key.startsWith("sk-or-")) {
+      errorEl.textContent = "格式错误：OpenRouter Key 应以 sk-or- 开头";
+      return;
+    }
+
     // 显示加载状态
     btnEnter.querySelector(".btn-text").style.display = "none";
     btnEnter.querySelector(".btn-loading").style.display = "inline";
@@ -51,19 +56,31 @@ function showScreen(id) {
     // 配置 LLM
     llm.configure(key, model);
 
-    // 验证 key
-    const valid = await llm.validateKey();
-    if (!valid) {
-      errorEl.textContent = "API Key 无效或网络错误，请检查";
+    // 严格验证 key + 余额
+    const result = await llm.validateKey();
+    if (!result.valid) {
+      errorEl.textContent = result.error;
       btnEnter.querySelector(".btn-text").style.display = "inline";
       btnEnter.querySelector(".btn-loading").style.display = "none";
       btnEnter.disabled = false;
       return;
     }
 
+    // 显示余额信息
+    if (result.credits !== null && result.credits !== undefined) {
+      hintEl.textContent = `✓ 验证通过 | 余额: $${result.credits.toFixed(3)}`;
+      hintEl.style.color = "var(--accent)";
+    } else {
+      hintEl.textContent = `✓ 验证通过 | 已用: $${(result.usage || 0).toFixed(3)}`;
+      hintEl.style.color = "var(--accent)";
+    }
+
     // 保存配置
     localStorage.setItem("openrouter_key", key);
     localStorage.setItem("llm_model", model);
+
+    // 短暂显示验证结果后进入游戏
+    await new Promise(r => setTimeout(r, 800));
 
     // 进入游戏
     showScreen("game");
