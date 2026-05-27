@@ -20,29 +20,33 @@ class LLMClient {
    */
   async validateKey() {
     try {
-      // OpenRouter /auth/key 端点返回 key 信息（余额、用量等）
+      // 10秒超时
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
       const resp = await fetch("https://openrouter.ai/api/v1/auth/key", {
-        headers: { "Authorization": `Bearer ${this.apiKey}` }
+        headers: { "Authorization": `Bearer ${this.apiKey}` },
+        signal: controller.signal
       });
+      clearTimeout(timeout);
 
       if (!resp.ok) {
         if (resp.status === 401 || resp.status === 403) {
           return { valid: false, error: "API Key 无效，请检查后重试" };
         }
-        return { valid: false, error: `验证请求失败 (${resp.status})` };
+        return { valid: false, error: `验证请求失败 (HTTP ${resp.status})` };
       }
 
       const data = await resp.json();
+      console.log("[LLM] /auth/key response:", JSON.stringify(data));
+
       const info = data.data || data;
 
-      // 检查额度信息
-      // OpenRouter 返回格式: { data: { label, usage, limit, is_free_tier, rate_limit } }
-      const usage = info.usage ?? 0;       // 已用金额 (美元)
-      const limit = info.limit ?? null;    // 额度上限 (null = 无限)
-      const remaining = limit !== null ? (limit - usage) : Infinity;
+      const usage = Number(info.usage) || 0;
+      const limit = info.limit != null ? Number(info.limit) : null;
+      const remaining = (limit !== null && isFinite(limit)) ? (limit - usage) : null;
 
-      // 如果有额度限制且余量不足 $0.01（约几千 tokens），拒绝
-      if (limit !== null && remaining < 0.01) {
+      if (remaining !== null && remaining < 0.01) {
         return {
           valid: false,
           error: `额度不足：已用 $${usage.toFixed(3)} / 限额 $${limit.toFixed(2)}，请充值`,
@@ -54,12 +58,15 @@ class LLMClient {
 
       return {
         valid: true,
-        credits: remaining === Infinity ? null : remaining,
+        credits: remaining,
         limit: limit,
         usage: usage,
         label: info.label || ""
       };
     } catch (e) {
+      if (e.name === "AbortError") {
+        return { valid: false, error: "验证超时，请检查网络连接" };
+      }
       return { valid: false, error: `网络错误: ${e.message}` };
     }
   }

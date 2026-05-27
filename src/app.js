@@ -53,38 +53,48 @@ function showScreen(id) {
     btnEnter.disabled = true;
     errorEl.textContent = "";
 
-    // 配置 LLM
-    llm.configure(key, model);
+    try {
+      // 配置 LLM
+      llm.configure(key, model);
 
-    // 严格验证 key + 余额
-    const result = await llm.validateKey();
-    if (!result.valid) {
-      errorEl.textContent = result.error;
+      // 严格验证 key + 余额
+      const result = await llm.validateKey();
+      console.log("[Login] validateKey result:", result);
+
+      if (!result.valid) {
+        errorEl.textContent = result.error || "验证失败";
+        btnEnter.querySelector(".btn-text").style.display = "inline";
+        btnEnter.querySelector(".btn-loading").style.display = "none";
+        btnEnter.disabled = false;
+        return;
+      }
+
+      // 显示余额信息
+      if (result.credits !== null && result.credits !== undefined && isFinite(result.credits)) {
+        hintEl.textContent = `✓ 验证通过 | 余额: $${Number(result.credits).toFixed(3)}`;
+      } else {
+        hintEl.textContent = `✓ 验证通过 | 已用: $${Number(result.usage || 0).toFixed(3)}`;
+      }
+      hintEl.style.color = "var(--accent)";
+
+      // 保存配置
+      localStorage.setItem("openrouter_key", key);
+      localStorage.setItem("llm_model", model);
+
+      // 短暂显示验证结果后进入游戏
+      await new Promise(r => setTimeout(r, 800));
+
+      // 进入游戏
+      showScreen("game");
+      initGame();
+
+    } catch (e) {
+      console.error("[Login] Error:", e);
+      errorEl.textContent = `出错: ${e.message}`;
       btnEnter.querySelector(".btn-text").style.display = "inline";
       btnEnter.querySelector(".btn-loading").style.display = "none";
       btnEnter.disabled = false;
-      return;
     }
-
-    // 显示余额信息
-    if (result.credits !== null && result.credits !== undefined) {
-      hintEl.textContent = `✓ 验证通过 | 余额: $${result.credits.toFixed(3)}`;
-      hintEl.style.color = "var(--accent)";
-    } else {
-      hintEl.textContent = `✓ 验证通过 | 已用: $${(result.usage || 0).toFixed(3)}`;
-      hintEl.style.color = "var(--accent)";
-    }
-
-    // 保存配置
-    localStorage.setItem("openrouter_key", key);
-    localStorage.setItem("llm_model", model);
-
-    // 短暂显示验证结果后进入游戏
-    await new Promise(r => setTimeout(r, 800));
-
-    // 进入游戏
-    showScreen("game");
-    initGame();
   });
 
   // 回车触发
@@ -400,7 +410,6 @@ function showEscortsModal() {
           <div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">规矩: ${rulesText}</div>
         </div>
       </div>`;
-  }).join("");
   }).join("");
 
   html += `<div class="modal-actions">
